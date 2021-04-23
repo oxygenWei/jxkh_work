@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.assess.mapper.AssessKpiMapper">
+    
+    <resultMap type="AssessKpi" id="AssessKpiResult">
+        <result property="kpiId"    column="kpi_id"    />
+        <result property="kpiName"    column="kpi_name"    />
+        <result property="kpiDescription"    column="kpi_description"    />
+        <result property="kpiGrading"    column="kpi_grading"    />
+        <result property="kpiWeight"    column="kpi_weight"    />
+        <result property="kpiParentId"    column="kpi_parent_id"    />
+        <result property="kpiType"    column="kpi_type"    />
+    </resultMap>
+
+    <sql id="selectAssessKpiVo">
+        select kpi_id, kpi_name, kpi_description, kpi_grading, kpi_weight, kpi_parent_id, kpi_type from assess_kpi
+    </sql>
+
+    <select id="selectAssessKpiList" parameterType="AssessKpi" resultMap="AssessKpiResult">
+        <include refid="selectAssessKpiVo"/>
+        <where>  
+            <if test="kpiName != null  and kpiName != ''"> and kpi_name like concat('%', #{kpiName}, '%')</if>
+            <if test="kpiDescription != null  and kpiDescription != ''"> and kpi_description = #{kpiDescription}</if>
+            <if test="kpiGrading != null  and kpiGrading != ''"> and kpi_grading = #{kpiGrading}</if>
+            <if test="kpiWeight != null "> and kpi_weight = #{kpiWeight}</if>
+            <if test="kpiParentId != null "> and kpi_parent_id = #{kpiParentId}</if>
+            <if test="kpiType != null "> and kpi_type = #{kpiType}</if>
+        </where>
+    </select>
+    
+    <select id="selectAssessKpiById" parameterType="Long" resultMap="AssessKpiResult">
+        <include refid="selectAssessKpiVo"/>
+        where kpi_id = #{kpiId}
+    </select>
+        
+    <insert id="insertAssessKpi" parameterType="AssessKpi" useGeneratedKeys="true" keyProperty="kpiId">
+        insert into assess_kpi
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="kpiName != null">kpi_name,</if>
+            <if test="kpiDescription != null">kpi_description,</if>
+            <if test="kpiGrading != null">kpi_grading,</if>
+            <if test="kpiWeight != null">kpi_weight,</if>
+            <if test="kpiParentId != null">kpi_parent_id,</if>
+            <if test="kpiType != null">kpi_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="kpiName != null">#{kpiName},</if>
+            <if test="kpiDescription != null">#{kpiDescription},</if>
+            <if test="kpiGrading != null">#{kpiGrading},</if>
+            <if test="kpiWeight != null">#{kpiWeight},</if>
+            <if test="kpiParentId != null">#{kpiParentId},</if>
+            <if test="kpiType != null">#{kpiType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAssessKpi" parameterType="AssessKpi">
+        update assess_kpi
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="kpiName != null">kpi_name = #{kpiName},</if>
+            <if test="kpiDescription != null">kpi_description = #{kpiDescription},</if>
+            <if test="kpiGrading != null">kpi_grading = #{kpiGrading},</if>
+            <if test="kpiWeight != null">kpi_weight = #{kpiWeight},</if>
+            <if test="kpiParentId != null">kpi_parent_id = #{kpiParentId},</if>
+            <if test="kpiType != null">kpi_type = #{kpiType},</if>
+        </trim>
+        where kpi_id = #{kpiId}
+    </update>
+
+    <delete id="deleteAssessKpiById" parameterType="Long">
+        delete from assess_kpi where kpi_id = #{kpiId}
+    </delete>
+
+    <delete id="deleteAssessKpiByIds" parameterType="String">
+        delete from assess_kpi where kpi_id in 
+        <foreach item="kpiId" collection="array" open="(" separator="," close=")">
+            #{kpiId}
+        </foreach>
+    </delete>
+</mapper>
